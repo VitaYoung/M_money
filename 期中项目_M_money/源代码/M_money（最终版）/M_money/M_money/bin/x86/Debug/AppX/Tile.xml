@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<tile>
+  <visual>
+
+
+    <binding template="TileSmall" branding="nameAndLogo">
+      <group>
+        <subgroup>
+          <text hint-style="bodySubtle"></text>
+        </subgroup>
+      </group>
+      <image src="Assets/background2.jpg" placement="background" hint-overlay="30"/>
+    </binding>
+    
+    <binding template="TileMedium" branding="nameAndlogo">
+      <group>
+        <subgroup>
+          <text hint-style="Subtitle"></text>
+          <text hint-style="bodySubtle"></text>          
+        </subgroup>
+      </group>
+      <image src="Assets/background2.jpg" placement="background" hint-overlay="30"/>
+    </binding>
+
+    <binding template="TileWide" branding="nameAndLogo">
+      <group>
+        <subgroup>
+          <text hint-style="title"></text>
+          <text hint-style="body"></text>
+          <text hint-style="Subtle"></text>
+        </subgroup>
+      </group>
+      <image  src="Assets/background2.jpg" placement="background" hint-overlay="30"/>
+    </binding>
+
+  </visual>
+</tile>

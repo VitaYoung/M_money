@@ -1,0 +1,496 @@
+﻿<Page
+    x:Class="M_money.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:M_money"
+    xmlns:md ="using:M_money.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+
+
+    <UserControl.Resources>
+        <local:budgetConverter x:Key="budget"/>
+    </UserControl.Resources>
+
+    <!--<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="Assets/background2.jpg" Opacity="0.5"/>
+        </Grid.Background>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="VisualStateMin0">
+                    <VisualState.Setters>
+                        <Setter Target="InlineToDoItemViewGrid.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="ToDoListView.(Grid.ColumnSpan)" Value="2"/>
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="VisualStateMin800">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="800"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--<TextBlock  Grid.Row="0" x:Name="textBlock" Text="M_money" Margin="10" Style="{StaticResource HeaderTextBlockStyle}"/>-->
+
+        <Image Grid.Row="0" Source="Assets/logo2.jpg" Width="400" Height="80"  HorizontalAlignment="Left" Opacity="0.8"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" x:Name="ToDoListView">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Image Source="Assets/wallet(1).png" Width="50" Height="40" VerticalAlignment="Top"></Image>
+                        <TextBlock x:Name="budget" Text ="Budget" FontSize="15" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                    </Grid>
+
+                    <TextBlock  Grid.Column="1" x:Name="RMB" Text ="￥" FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" x:Name="Balance" Text="{Binding Value,Converter={StaticResource budget},ElementName = MySlider}"  FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="3" x:Name="line"  Text="/" FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="4" x:Name="Income" Text="{Binding ElementName=MySlider, Path=Value}"  FontSize="20" VerticalAlignment="Center"/>
+                    <Slider Grid.Column="5" Margin="30,10,50,0" Minimum="1000" Maximum="10000" StepFrequency="100" x:Name="MySlider" />
+                </Grid>
+
+                <Pivot Grid.Row="1">
+                    <Pivot.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"  Style="{StaticResource CaptionTextBlockStyle}" FontSize="25" />
+                        </DataTemplate>
+                    </Pivot.HeaderTemplate>
+                    <PivotItem Header="Day">
+                        <ListView ItemClick="MoneyItem_Click" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.AllItems}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="md:M_moneyItem">
+                                    <Grid Height="100">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+                                        <!-- 只绑定了title, 其余请自己完成-->
+                                        <Image x:Name="IMG" Source="{x:Bind typeImg}" Grid.Column="0" Height="40" Width="40" Margin="0,3,12,7"/>
+                                        <TextBlock Text="{x:Bind description}" Grid.Column="1" FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock  Grid.Column="2" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Text="{x:Bind cost}" Grid.Column="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock  Text="{x:Bind time}" Grid.Column="4" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                        <AppBarButton Grid.Column="5" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                            <AppBarButton.Flyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="Delete" Click="DeleteButton_Click"/>
+                                                    <MenuFlyoutItem Text="Share" Click="ShareButton_Click" />
+                                                </MenuFlyout>
+                                            </AppBarButton.Flyout>
+                                        </AppBarButton>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </PivotItem>
+                    <PivotItem Header="Month">
+                        <ScrollViewer >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <ComboBox  Grid.Row="0" x:Name="comboBox" SelectionChanged="Combobox_click"
+                                           ItemsSource="{x:Bind ViewModel.YearItems}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="151" Margin="0,0,25,0">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate x:DataType="md:YearItem">
+                                            <TextBlock Text="{x:Bind year}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <ListView Grid.Row="1" ItemClick="Month_ItemClick" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.MonthItems}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="md:MonthItem">
+                                            <Grid Height="100">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                </Grid.ColumnDefinitions>
+                                                <!-- 只绑定了title, 其余请自己完成-->
+                                                <TextBlock  Text="{x:Bind month}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                                <TextBlock  Grid.Column="1" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                                <Line Grid.Column="1" Stretch="Fill" Stroke="Black" StrokeThickness="2" X1="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0,0,20,0"  Opacity="0"/>
+                                                <TextBlock Text="{x:Bind cost}" Grid.Column="2" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <AppBarButton Grid.Column="3" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                          
+                                                </AppBarButton>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </ScrollViewer>
+                    </PivotItem>
+                    <PivotItem Header="Year">
+                        <ListView ItemClick="Year_ItemClick" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.YearItems}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="md:YearItem">
+                                    <Grid Height="100">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <!-- 只绑定了title, 其余请自己完成-->
+                                        <TextBlock  Text="{x:Bind year}" Grid.Column="0" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                        <TextBlock  Grid.Column="1" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <Line Grid.Column="1" Stretch="Fill" Stroke="Black" StrokeThickness="2" X1="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0,0,20,0"  Opacity="0"/>
+                                        <TextBlock Text="{x:Bind cost}" Grid.Column="2" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <AppBarButton Grid.Column="3" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                          
+                                        </AppBarButton>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </PivotItem>
+                    <PivotItem Header="Customize">
+                        <Pivot>
+                            <Pivot.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" FontSize="20" />
+                                </DataTemplate>
+                            </Pivot.HeaderTemplate>
+
+                            <PivotItem Header="Food">
+                                <ListView ItemClick="MoneyItem_Click" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.FoodItems}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="md:M_moneyItem">
+                                            <Grid Height="100">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="50" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- 只绑定了title, 其余请自己完成-->
+                                                <Image x:Name="IMG" Source="Assets/Food.png" Grid.Column="0"  Height="40" Width="40" Margin="0,3,12,7"/>
+                                                <TextBlock Text="{x:Bind description}" Grid.Column="1" FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock  Grid.Column="2" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{x:Bind cost}" Grid.Column="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                <TextBlock  Text="{x:Bind time}" Grid.Column="4" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                                <AppBarButton Grid.Column="5" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                                    <AppBarButton.Flyout>
+                                                        <MenuFlyout>
+                                                            <MenuFlyoutItem Text="Delete" Click="DeleteButton_Click" />
+                                                            <MenuFlyoutItem Text="Share" Click="ShareButton_Click" />
+                                                        </MenuFlyout>
+                                                    </AppBarButton.Flyout>
+                                                </AppBarButton>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </PivotItem>
+                            <PivotItem Header="Transport">
+                                <ListView ItemClick="MoneyItem_Click" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.TransportItems}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="md:M_moneyItem">
+                                            <Grid Height="100">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="50" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- 只绑定了title, 其余请自己完成-->
+                                                <Image x:Name="IMG" Source="Assets/Transport.png" Grid.Column="0" Height="40" Width="40" Margin="0,3,12,7"/>
+                                                <TextBlock Text="{x:Bind description}" Grid.Column="1" FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock  Grid.Column="2" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{x:Bind cost}" Grid.Column="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                <TextBlock  Text="{x:Bind time}" Grid.Column="4" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                                <AppBarButton Grid.Column="5" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                                    <AppBarButton.Flyout>
+                                                        <MenuFlyout>
+                                                            <MenuFlyoutItem Text="Delete" Click="DeleteButton_Click"/>
+                                                            <MenuFlyoutItem Text="Share" Click="ShareButton_Click" />
+                                                        </MenuFlyout>
+                                                    </AppBarButton.Flyout>
+                                                </AppBarButton>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </PivotItem>
+                            <PivotItem Header="Fun">
+                                <ListView ItemClick="MoneyItem_Click" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.FunItems}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="md:M_moneyItem">
+                                            <Grid Height="100">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="50" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- 只绑定了title, 其余请自己完成-->
+                                                <Image x:Name="IMG" Source="Assets/Fun.png" Grid.Column="0"  Height="40" Width="40" Margin="0,3,12,7"/>
+                                                <TextBlock Text="{x:Bind description}" Grid.Column="1" FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock  Grid.Column="2" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{x:Bind cost}" Grid.Column="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                <TextBlock  Text="{x:Bind time}" Grid.Column="4" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                                <AppBarButton Grid.Column="5" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                                    <AppBarButton.Flyout>
+                                                        <MenuFlyout>
+                                                            <MenuFlyoutItem Text="Delete" Click="DeleteButton_Click"/>
+                                                            <MenuFlyoutItem Text="Share" Click="ShareButton_Click" />
+                                                        </MenuFlyout>
+                                                    </AppBarButton.Flyout>
+                                                </AppBarButton>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </PivotItem>
+                            <PivotItem Header="Clothes">
+                                <ListView ItemClick="MoneyItem_Click" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.ClothesItems}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="md:M_moneyItem">
+                                            <Grid Height="100">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="50" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- 只绑定了title, 其余请自己完成-->
+                                                <Image x:Name="IMG" Source="Assets/Clothes.png" Grid.Column="0" Height="40" Width="40" Margin="0,3,12,7"/>
+                                                <TextBlock Text="{x:Bind description}" Grid.Column="1" FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock  Grid.Column="2" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{x:Bind cost}" Grid.Column="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                <TextBlock  Text="{x:Bind time}" Grid.Column="4" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                                <AppBarButton Grid.Column="5" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                                    <AppBarButton.Flyout>
+                                                        <MenuFlyout>
+                                                            <MenuFlyoutItem Text="Delete" Click="DeleteButton_Click"/>
+                                                            <MenuFlyoutItem Text="Share" Click="ShareButton_Click" />
+                                                        </MenuFlyout>
+                                                    </AppBarButton.Flyout>
+                                                </AppBarButton>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </PivotItem>
+                            <PivotItem Header="Study">
+                                <ListView ItemClick="MoneyItem_Click" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.StudyItems}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="md:M_moneyItem">
+                                            <Grid Height="100">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="50" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- 只绑定了title, 其余请自己完成-->
+                                                <Image x:Name="IMG" Source="Assets/Study.png" Grid.Column="0"  Height="40" Width="40" Margin="0,3,12,7"/>
+                                                <TextBlock Text="{x:Bind description}" Grid.Column="1" FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock  Grid.Column="2" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{x:Bind cost}" Grid.Column="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                <TextBlock  Text="{x:Bind time}" Grid.Column="4" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                                <AppBarButton Grid.Column="5" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                                    <AppBarButton.Flyout>
+                                                        <MenuFlyout>
+                                                            <MenuFlyoutItem Text="Delete" Click="DeleteButton_Click"/>
+                                                            <MenuFlyoutItem Text="Share" Click="ShareButton_Click" />
+                                                        </MenuFlyout>
+                                                    </AppBarButton.Flyout>
+                                                </AppBarButton>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </PivotItem>
+                            <PivotItem Header="Other">
+                                <ListView ItemClick="MoneyItem_Click" IsItemClickEnabled="True" Margin="-10,0,10,0" ItemsSource="{x:Bind ViewModel.OtherItems}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="md:M_moneyItem">
+                                            <Grid Height="100">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="50" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- 只绑定了title, 其余请自己完成-->
+                                                <Image x:Name="IMG" Source="Assets/Other.png" Grid.Column="0"  Height="40" Width="40" Margin="0,3,12,7"/>
+                                                <TextBlock Text="{x:Bind description}" Grid.Column="1" FontSize="20"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock  Grid.Column="2" Text ="￥" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{x:Bind cost}" Grid.Column="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                <TextBlock  Text="{x:Bind time}" Grid.Column="4" VerticalAlignment="Center" Foreground="Black" FontWeight="Normal" FontSize="20" LineHeight="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                                                <AppBarButton Grid.Column="5" Margin="0,10,0,0" Icon="Setting" IsCompact="True" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="AppButton">
+                                                    <AppBarButton.Flyout>
+                                                        <MenuFlyout>
+                                                            <MenuFlyoutItem Text="Delete" Click="DeleteButton_Click"/>
+                                                            <MenuFlyoutItem Text="Share" Click="ShareButton_Click" />
+                                                        </MenuFlyout>
+                                                    </AppBarButton.Flyout>
+                                                </AppBarButton>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </PivotItem>
+                        </Pivot>
+                    </PivotItem>
+                </Pivot>
+            </Grid>
+            <Grid Grid.Column="1" x:Name="InlineToDoItemViewGrid">
+                <ScrollViewer Margin="0,3,40,37">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Source=" Assets/bill-1.png" Width="30"/>
+                            <TextBlock Grid.Column="1" Text="Type" FontSize="25" Margin="0,0,0,10"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"></RowDefinition>
+                                <RowDefinition Height="auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <Image Source="Assets/Clothes.png" Width="50"/>
+                                    <Grid>
+                                        <TextBlock Text="Clothes" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <CheckBox x:Name="Clothes" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CheckBox_click"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <Image Source="Assets/Study.png" Width="50"/>
+                                    <Grid>
+                                        <TextBlock Text="Study" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <CheckBox x:Name="Study" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CheckBox_click"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <Image Source="Assets/Transport.png" Width="50"/>
+                                    <Grid>
+                                        <TextBlock Text="Transport" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <CheckBox x:Name="Transport" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CheckBox_click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Row="1" Margin="0,20,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <Image Source="Assets/Food.png" Width="50"/>
+                                    <Grid>
+                                        <TextBlock Text="Food" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <CheckBox x:Name="Food" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CheckBox_click"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <Image Source="Assets/Fun.png" Width="50"/>
+                                    <Grid>
+                                        <TextBlock Text="Fun" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <CheckBox x:Name="Fun" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CheckBox_click"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <Image Source="Assets/Other.png" Width="50"/>
+                                    <Grid>
+                                        <TextBlock Text="Other" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <CheckBox x:Name="Other" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CheckBox_click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Source="Assets/coin.png" Width="30"/>
+                            <TextBlock Grid.Column="1" Text="Costs" FontSize="25"  Margin="0,5,0,5"  Height="40" />
+                        </Grid>
+
+                        <TextBox x:Name="cost" Width="350"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image  Grid.Column="0" Source="Assets/calendar.png" Width="30"/>
+                            <TextBlock Grid.Column="1" Text="Date" FontSize="25"  Margin="0,5,0,5"/>
+                        </Grid>
+
+                        <DatePicker Width="350" Margin="0,12,0,0" HorizontalAlignment="Center" x:Name="date"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="Assets/documents.png" Grid.Column="0" Width="30"/>
+                            <TextBlock Grid.Column="1" Text="Detail" FontSize="25"  Margin="0,5,0,5"/>
+                        </Grid>
+                        <TextBox x:Name="detail" Width="350"/>
+                        <RelativePanel Width="350" Margin="0,30,0,0">
+                            <Button x:Name="CreateButton" Content="Save" Width="80" Click="SaveButton_Click" ></Button>
+                            <Button x:Name="CancelButton" Content="Cancel" RelativePanel.AlignRightWithPanel="True" Width="80" Click="CancelButton_Click"></Button>
+                        </RelativePanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
